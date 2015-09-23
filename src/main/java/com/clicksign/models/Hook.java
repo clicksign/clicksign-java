@@ -31,20 +31,20 @@ public class Hook extends ClicksignResource {
 		this.url = url;
 	}
 
-	public static HookCollection all(Document document, String accessToken) throws ClicksignException {
-		return request(RequestMethod.GET, instanceURL(Document.class, document.getKey(), Hook.class), null,
-				HookCollection.class, accessToken);
+	public static HookCollection all(String key, String accessToken) throws ClicksignException {
+		return request(RequestMethod.GET, instanceURL(Document.class, key, Hook.class), null, HookCollection.class,
+				accessToken);
 	}
 
-	public static Hook create(Document document, String url, String accessToken) throws ClicksignException {
+	public static Hook create(String key, String url, String accessToken) throws ClicksignException {
 		// TODO use Url as a parameter
 		Map<String, Object> params = null;
-		return request(RequestMethod.POST, instanceURL(Document.class, document.getKey(), Hook.class), params,
-				Hook.class, accessToken);
+		return request(RequestMethod.POST, instanceURL(Document.class, key, Hook.class), params, Hook.class,
+				accessToken);
 	}
 
-	public static Hook delete(Document document, String url, String accessToken) throws ClicksignException {
-		return request(RequestMethod.DELETE, instanceURL(Document.class, document.getKey(), Hook.class), null,
-				Hook.class, accessToken);
+	public static Hook delete(String key, String url, String accessToken) throws ClicksignException {
+		return request(RequestMethod.DELETE, instanceURL(Document.class, key, Hook.class), null, Hook.class,
+				accessToken);
 	}
 }
