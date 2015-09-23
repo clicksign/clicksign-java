@@ -19,6 +19,16 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+        	<groupId>org.apache.httpcomponents</groupId>
+        	<artifactId>httpclient</artifactId>
+        	<version>4.5</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.httpcomponents</groupId>
+        	<artifactId>httpmime</artifactId>
+        	<version>4.5.1</version>
+        </dependency>
     </dependencies>
     <description>Clicksign Java Client Library</description>
     <organization>
