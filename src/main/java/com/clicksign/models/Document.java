@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.clicksign.exception.ClicksignException;
 import com.clicksign.net.ClicksignResource;
+import com.clicksign.net.UrlBuilder;
 
 public class Document extends ClicksignResource {
 	String key;
@@ -71,21 +72,36 @@ public class Document extends ClicksignResource {
 		this.list = list;
 	}
 
+	public static DocumentCollection all() throws ClicksignException {
+		return all(null);
+	}
+
+	public static DocumentCollection all(String accessToken) throws ClicksignException {
+		return request(RequestMethod.GET, UrlBuilder.classURL(Document.class), null, DocumentCollection.class,
+				accessToken);
+	}
+
 	public static Document find(String key) throws ClicksignException {
 		return find(key, null);
 	}
 
-	public static DocumentCollection all(String accessToken) throws ClicksignException {
-		return request(RequestMethod.GET, classURL(Document.class), null, DocumentCollection.class, accessToken);
+	public static Document find(String key, String accessToken) throws ClicksignException {
+		return request(RequestMethod.GET, UrlBuilder.instanceURL(Document.class, key), null, Document.class,
+				accessToken);
 	}
 
-	public static Document find(String key, String accessToken) throws ClicksignException {
-		return request(RequestMethod.GET, instanceURL(Document.class, key), null, Document.class, accessToken);
+	public static Document create(String key) throws ClicksignException {
+		return create(key, null);
 	}
 
 	public static Document create(String key, String accessToken) throws ClicksignException {
 		// TODO get a FileStream, etc.
-		return request(RequestMethod.POST, instanceURL(Document.class, key), null, Document.class, accessToken);
+		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key), null, Document.class,
+				accessToken);
+	}
+
+	public static Document createList(String key, SignatureList list, Boolean skipEmail) throws ClicksignException {
+		return createList(key, list, skipEmail, null);
 	}
 
 	public static Document createList(String key, SignatureList list, Boolean skipEmail, String accessToken)
@@ -93,8 +109,12 @@ public class Document extends ClicksignResource {
 		// TODO transform list in parameters, and use skipEmail
 		Map<String, Object> params = null;
 
-		return request(RequestMethod.POST, instanceURL(Document.class, key, "list"), params, Document.class,
+		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, "list"), params, Document.class,
 				accessToken);
+	}
+
+	public static Document resend(String key, String email, String message) throws ClicksignException {
+		return resend(key, email, message, null);
 	}
 
 	public static Document resend(String key, String email, String message, String accessToken)
@@ -102,18 +122,26 @@ public class Document extends ClicksignResource {
 		// TODO use email and message in the params
 		Map<String, Object> params = null;
 
-		return request(RequestMethod.POST, instanceURL(Document.class, key, "resend"), params, Document.class,
-				accessToken);
+		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, "resend"), params,
+				Document.class, accessToken);
+	}
+
+	public static Document cancel(String key) throws ClicksignException {
+		return cancel(key, null);
 	}
 
 	public static Document cancel(String key, String accessToken) throws ClicksignException {
-		return request(RequestMethod.POST, instanceURL(Document.class, key, "cancel"), null, Document.class,
+		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, "cancel"), null, Document.class,
 				accessToken);
+	}
+
+	public static Document download(String key) throws ClicksignException {
+		return download(key, null);
 	}
 
 	public static Document download(String key, String accessToken) throws ClicksignException {
 		// TODO get a FileStream, etc
-		return request(RequestMethod.GET, instanceURL(Document.class, key, "download"), null, Document.class,
+		return request(RequestMethod.GET, UrlBuilder.instanceURL(Document.class, key, "download"), null, Document.class,
 				accessToken);
 	}
 }
