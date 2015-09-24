@@ -16,6 +16,12 @@ public class Signature {
 	Date createdAt;
 	Date updatedAt;
 
+	public Signature(String email, String act) {
+		super();
+		this.act = act;
+		this.email = email;
+	}
+
 	public String getDisplayName() {
 		return displayName;
 	}

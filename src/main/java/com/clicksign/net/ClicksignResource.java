@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.URLStreamHandler;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -39,6 +40,7 @@ import com.clicksign.exception.ClicksignException;
 import com.clicksign.models.Batch;
 import com.clicksign.models.Document;
 import com.clicksign.models.Hook;
+import com.clicksign.models.Signature;
 import com.clicksign.models.SignatureList;
 import com.clicksign.models.deserializers.BatchDeserializer;
 import com.clicksign.models.deserializers.DocumentDeserializer;
@@ -254,20 +256,48 @@ public class ClicksignResource {
 			Object value = entry.getValue();
 			if (value instanceof File) {
 				builder.addPart(key, new FileBody((File) value));
+			} else if (value instanceof SignatureList) {
+				List<Signature> signatureList = ((SignatureList) value).getSignatures();
+				
+			    for (int i = 0; i < signatureList.size(); i++) {
+				  Signature signature = signatureList.get(i);
+				  String mailKey = String.format("%s[][email]", key);
+				  StringBody email = new StringBody(signature.getEmail(),TEXT_PLAIN);
+				  builder.addPart(mailKey, email);
+				  
+				  String actKey =  String.format("%s[][act]", key);
+				  StringBody act = new StringBody(signature.getAct(), TEXT_PLAIN);
+				  builder.addPart(actKey, act);				  
+			   }
+//			} else if (value instanceof List<?>) {
+//				StringBody nValue = new StringBody(gson.toJson(value).toString(), TEXT_PLAIN);
+//				builder.addPart(key, nValue);
 			} else if (value instanceof List<?>) {
 				List<?> nestedList = (List<?>) value;
 				for (int i = 0; i < nestedList.size(); i++) {
-					String nKey = String.format("%s[%s]", key, i);
-					StringBody nValue = new StringBody(nestedList.get(i).toString(), TEXT_PLAIN);
+					String nKey = String.format("%s[]", key);
+					StringBody nValue = new StringBody(gson.toJson(nestedList.get(i), Map.class).toString(), TEXT_PLAIN);
 					builder.addPart(nKey, nValue);
-				}
+				}							
 			} else if (value instanceof String) {
+				builder.addPart(key, new StringBody(value.toString(), TEXT_PLAIN));
+			} else if (value instanceof Boolean) {
 				builder.addPart(key, new StringBody(value.toString(), TEXT_PLAIN));
 			} else {
 				throw new ClicksignException(
 						String.format("Erro ao codificar parametros HTTP: %s", value.getClass().getName()));
 			}
 		}
+//		
+//		//TODO morreu aqui
+//		try {
+//			builder.build().writeTo(System.out);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		System.exit(0);
+		
 
 		return builder.build();
 	}
@@ -485,6 +515,7 @@ public class ClicksignResource {
 				flatParams.putAll(flattenParams(flatNestedMap));
 			} else if (value instanceof List) {
 				Map<String, Object> flatNestedMap = new HashMap<String, Object>();
+				//TODO olhar aqui
 				List<?> nestedList = (List<?>) value;
 				for (int i = 0; i < nestedList.size(); i++) {
 					flatNestedMap.put(String.format("%s[%s]", key, i), nestedList.get(i));

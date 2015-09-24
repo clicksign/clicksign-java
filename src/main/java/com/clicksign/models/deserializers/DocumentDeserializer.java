@@ -35,4 +35,5 @@ public class DocumentDeserializer implements JsonDeserializer<Document> {
 
 		return new Document(key, originalName, status, createdAt, updatedAt, userKey, list);
 	}
+
 }

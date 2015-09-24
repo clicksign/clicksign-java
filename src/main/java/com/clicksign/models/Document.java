@@ -1,8 +1,11 @@
 package com.clicksign.models;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.clicksign.exception.ClicksignException;
@@ -116,19 +119,36 @@ public class Document extends ClicksignResource {
 				accessToken);
 	}
 
-	public static Document createList(String key, SignatureList list, Boolean skipEmail) throws ClicksignException {
-		return createList(key, list, skipEmail, null);
+	public static Document createList(String key, List<Signature> signers, Boolean skipEmail) throws ClicksignException {
+		return createList(key, signers, skipEmail, null);
+	}
+	
+	public static Document createList(String key, List<Signature> signers) throws ClicksignException {
+		return createList(key, signers, Boolean.TRUE, null);
 	}
 
-	public static Document createList(String key, SignatureList list, Boolean skipEmail, String accessToken)
+	public static Document createList(String key, List<Signature> signers, Boolean skipEmail, String accessToken)
 			throws ClicksignException {
-		// TODO transform list in parameters, and use skipEmail
-		Map<String, Object> params = null;
+		Map<String, Object> params = new HashMap<String, Object>();;
+		params.put("skip_email", skipEmail);
+		params.put("signers", new SignatureList(signers));
+//		params.put("signers", buildSignersArray(signers));
 
 		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, "list"), params, Document.class,
 				accessToken);
 	}
 
+	private static List<Map<String,String>> buildSignersArray(List<Signature>signers) {
+		List<Map<String,String>> mapList = new ArrayList<Map<String,String>>();
+		for (Signature signature: signers) {
+			Map<String,String> signerMap = new HashMap<String,String>();
+			signerMap.put("email", signature.getEmail());
+			signerMap.put("act", signature.getAct());
+			mapList.add(signerMap);
+		}
+		return mapList;
+	}
+	
 	public static Document resend(String key, String email, String message) throws ClicksignException {
 		return resend(key, email, message, null);
 	}

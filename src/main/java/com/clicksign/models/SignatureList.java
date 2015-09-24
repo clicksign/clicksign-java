@@ -19,6 +19,11 @@ public class SignatureList {
 		this.signatures = signatures;
 	}
 
+	public SignatureList(List<Signature> signatures) {
+		super();
+		this.signatures = signatures;
+	}
+	
 	public Date getCreatedAt() {
 		return createdAt;
 	}
