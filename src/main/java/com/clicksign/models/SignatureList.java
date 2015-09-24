@@ -4,34 +4,43 @@ import java.util.Date;
 import java.util.List;
 
 public class SignatureList {
-	Date created_at;
-	Date started_at;
-	Date updated_at;
+	Date createdAt;
+	Date startedAt;
+	Date updatedAt;
 	String userKey;
 	List<Signature> signatures;
 
-	public Date getCreated_at() {
-		return created_at;
+	public SignatureList(Date createdAt, Date startedAt, Date updatedAt, String userKey, List<Signature> signatures) {
+		super();
+		this.createdAt = createdAt;
+		this.startedAt = startedAt;
+		this.updatedAt = updatedAt;
+		this.userKey = userKey;
+		this.signatures = signatures;
 	}
 
-	public void setCreated_at(Date created_at) {
-		this.created_at = created_at;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public Date getStarted_at() {
-		return started_at;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public void setStarted_at(Date started_at) {
-		this.started_at = started_at;
+	public Date getStartedAt() {
+		return startedAt;
 	}
 
-	public Date getUpdated_at() {
-		return updated_at;
+	public void setStartedAt(Date startedAt) {
+		this.startedAt = startedAt;
 	}
 
-	public void setUpdated_at(Date updated_at) {
-		this.updated_at = updated_at;
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public String getUserKey() {

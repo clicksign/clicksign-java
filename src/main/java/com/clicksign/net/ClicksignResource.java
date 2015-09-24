@@ -39,9 +39,11 @@ import com.clicksign.exception.ClicksignException;
 import com.clicksign.models.Batch;
 import com.clicksign.models.Document;
 import com.clicksign.models.Hook;
+import com.clicksign.models.SignatureList;
 import com.clicksign.models.deserializers.BatchDeserializer;
 import com.clicksign.models.deserializers.DocumentDeserializer;
 import com.clicksign.models.deserializers.HookDeserializer;
+import com.clicksign.models.deserializers.SignatureListDeserializer;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -55,9 +57,12 @@ public class ClicksignResource {
 
 	public static final Gson gson = new GsonBuilder()
 			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-			.registerTypeAdapter(Batch.class, new BatchDeserializer())
+			.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+			// .registerTypeAdapter(Batch.class, new BatchDeserializer())
 			.registerTypeAdapter(Document.class, new DocumentDeserializer())
-			.registerTypeAdapter(Hook.class, new HookDeserializer()).create();
+			.registerTypeAdapter(SignatureList.class, new SignatureListDeserializer())
+			// .registerTypeAdapter(Hook.class, new HookDeserializer())
+			.create();
 
 	private static final ContentType TEXT_PLAIN = ContentType.TEXT_PLAIN;
 
@@ -123,12 +128,14 @@ public class ClicksignResource {
 		String rBody = response.responseBody;
 
 		// System.out.println(rCode);
-		// System.out.println(rBody);
+		System.out.println(rBody);
 		// System.exit(0);
 
 		if (rCode < 200 || rCode >= 300) {
 			handleAPIError(rBody, rCode);
 		}
+
+		System.out.println(gson.fromJson(rBody, clazz));
 
 		return gson.fromJson(rBody, clazz);
 	}
