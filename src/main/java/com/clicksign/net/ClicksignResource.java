@@ -127,15 +127,15 @@ public class ClicksignResource {
 		int rCode = response.responseCode;
 		String rBody = response.responseBody;
 
+		// System.out.println("_requestX");
 		// System.out.println(rCode);
-		System.out.println(rBody);
-		// System.exit(0);
+		// System.out.println(rBody);
 
 		if (rCode < 200 || rCode >= 300) {
 			handleAPIError(rBody, rCode);
 		}
 
-		System.out.println(gson.fromJson(rBody, clazz));
+		// System.out.println(gson.fromJson(rBody, clazz));
 
 		return gson.fromJson(rBody, clazz);
 	}
@@ -197,6 +197,8 @@ public class ClicksignResource {
 	private static HttpResponse executePostRequest(String url, HttpEntity reqEntity) throws IOException {
 		HttpPost request = new HttpPost(url);
 		addHeaders(request);
+		request.setEntity(reqEntity);
+
 		CloseableHttpClient client = createClicksignClient();
 
 		return executeRequest(request, client);
@@ -215,6 +217,7 @@ public class ClicksignResource {
 		HttpPut request = new HttpPut(url);
 		addHeaders(request);
 		request.setEntity(reqEntity);
+
 		CloseableHttpClient client = createClicksignClient();
 
 		return executeRequest(request, client);
@@ -223,6 +226,7 @@ public class ClicksignResource {
 	private static HttpResponse executeDeleteRequest(String url, HttpEntity reqEntity) throws IOException {
 		HttpDelete request = new HttpDelete(url);
 		addHeaders(request);
+
 		CloseableHttpClient client = createClicksignClient();
 
 		return executeRequest(request, client);
@@ -290,7 +294,7 @@ public class ClicksignResource {
 					+ ". Por favor, envie email para suporte@clicksign.com.", e);
 		}
 
-		System.out.println("ClicksignResource._request url: " + url);
+		// System.out.println("ClicksignResource._request url: " + url);
 
 		// ClicksignResponse response = makeURLConnectionRequest(method, url,
 		// query, accessToken);

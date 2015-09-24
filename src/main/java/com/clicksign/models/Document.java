@@ -1,6 +1,8 @@
 package com.clicksign.models;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.clicksign.exception.ClicksignException;
@@ -102,13 +104,15 @@ public class Document extends ClicksignResource {
 				accessToken);
 	}
 
-	public static Document create(String key) throws ClicksignException {
-		return create(key, null);
+	public static Document create(File file) throws ClicksignException {
+		return create( file, null);
 	}
 
-	public static Document create(String key, String accessToken) throws ClicksignException {
-		// TODO get a FileStream, etc.
-		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key), null, Document.class,
+	public static Document create(File file, String accessToken) throws ClicksignException {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("document[archive][original]", file);
+
+		return request(RequestMethod.POST, UrlBuilder.classURL(Document.class), params, Document.class,
 				accessToken);
 	}
 

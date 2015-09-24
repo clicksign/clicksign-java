@@ -7,9 +7,6 @@ public class ClicksignResponse {
 	public ClicksignResponse(int responseCode, String responseBody) {
 		this.responseCode = responseCode;
 		this.responseBody = responseBody;
-
-		System.out.println("ClicksignResponse(int responseCode, String responseBody)");
-		System.out.println(this.responseBody);
 	}
 
 	public int getResponseCode() {
