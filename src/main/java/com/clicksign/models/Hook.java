@@ -1,5 +1,7 @@
 package com.clicksign.models;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.clicksign.exception.ClicksignException;
@@ -7,21 +9,17 @@ import com.clicksign.net.ClicksignResource;
 import com.clicksign.net.UrlBuilder;
 
 public class Hook extends ClicksignResource {
-	Document document;
+	String id;
 	String url;
+	Date createdAt;
+	Date updatedAt;
 
-	public Hook(Document document, String url) {
-		super();
-		this.document = document;
-		this.url = url;
+	public String getId() {
+		return id;
 	}
 
-	public Document getDocument() {
-		return document;
-	}
-
-	public void setDocument(Document document) {
-		this.document = document;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUrl() {
@@ -30,6 +28,22 @@ public class Hook extends ClicksignResource {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public static HookCollection all(String key) throws ClicksignException {
@@ -46,18 +60,19 @@ public class Hook extends ClicksignResource {
 	}
 
 	public static Hook create(String key, String url, String accessToken) throws ClicksignException {
-		// TODO use Url as a parameter
-		Map<String, Object> params = null;
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("url", url);
+
 		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, Hook.class), params, Hook.class,
 				accessToken);
 	}
 
-	public static Hook delete(String key, String url) throws ClicksignException {
-		return delete(key, url, null);
+	public static void delete(String key, String id) throws ClicksignException {
+		delete(key, id, null);
 	}
 
-	public static Hook delete(String key, String url, String accessToken) throws ClicksignException {
-		return request(RequestMethod.DELETE, UrlBuilder.instanceURL(Document.class, key, Hook.class), null, Hook.class,
+	public static void delete(String key, String id, String accessToken) throws ClicksignException {
+		request(RequestMethod.DELETE, UrlBuilder.instanceURL(Document.class, key, Hook.class, id), null, Hook.class,
 				accessToken);
 	}
 }

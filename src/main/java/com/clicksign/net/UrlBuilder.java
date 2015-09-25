@@ -5,7 +5,7 @@ import com.clicksign.Clicksign;
 public class UrlBuilder {
 
 	public static String instanceURL(Class<?> clazz, String key, Class<?> klazz, String id) {
-		return String.format("%s/%s/%s/%s", classURL(clazz), key, classURL(klazz), id);
+		return String.format("%s/%s/%s/%s", classURL(clazz), key, pluralize(className(klazz)), id);
 	}
 
 	public static String instanceURL(Class<?> clazz, String key) {
@@ -13,7 +13,7 @@ public class UrlBuilder {
 	}
 
 	public static String instanceURL(Class<?> clazz, String key, Class<?> klazz) {
-		return String.format("%s/%s/%s", classURL(clazz), key, classURL(klazz));
+		return String.format("%s/%s/%s", classURL(clazz), key, pluralize(className(klazz)));
 	}
 
 	public static String instanceURL(Class<?> clazz, String key, String action) {
@@ -26,10 +26,14 @@ public class UrlBuilder {
 
 	public static String classURL(Class<?> clazz) {
 		String singleURL = singleClassURL(clazz);
+		return pluralize(singleURL);
+	}
+
+	private static String pluralize(String singleURL) {
 		if (singleURL.charAt(singleURL.length() - 1) == 'h') {
-			return String.format("%ses", singleClassURL(clazz));
+			return String.format("%ses", singleURL);
 		} else {
-			return String.format("%ss", singleClassURL(clazz));
+			return String.format("%ss", singleURL);
 		}
 	}
 
