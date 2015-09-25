@@ -1,6 +1,7 @@
 package com.clicksign.models;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,21 +56,21 @@ public class Batch extends ClicksignResource {
 	}
 
 	public static Batch create(List<String> keys) throws ClicksignException {
-		return create(keys);
+		return create(keys, null);
 	}
 
 	public static Batch create(List<String> keys, String accessToken) throws ClicksignException {
-		// TODO set keys in the params object
-		Map<String, Object> params = null;
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("keys", keys);
 
 		return request(RequestMethod.POST, UrlBuilder.classURL(Batch.class), params, Batch.class, accessToken);
 	}
 
-	public static Batch delete(String id) throws ClicksignException {
-		return delete(id, null);
+	public static void delete(String key) throws ClicksignException {
+		delete(key, null);
 	}
 
-	public static Batch delete(String id, String accessToken) throws ClicksignException {
-		return request(RequestMethod.DELETE, UrlBuilder.instanceURL(Batch.class, id), null, Batch.class, accessToken);
+	public static void delete(String key, String accessToken) throws ClicksignException {
+		request(RequestMethod.DELETE, UrlBuilder.instanceURL(Batch.class, key), null, Batch.class, accessToken);
 	}
 }

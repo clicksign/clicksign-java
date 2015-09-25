@@ -23,7 +23,7 @@ public class SignatureList {
 		super();
 		this.signatures = signatures;
 	}
-	
+
 	public Date getCreatedAt() {
 		return createdAt;
 	}

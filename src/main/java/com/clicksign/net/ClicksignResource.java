@@ -48,7 +48,6 @@ public class ClicksignResource {
 	public static final Gson gson = new GsonBuilder()
 			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 			.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-			// .registerTypeAdapter(Batch.class, new BatchDeserializer())
 			.registerTypeAdapter(BatchCollection.class, new BatchCollectionDeserializer())
 			.registerTypeAdapter(Document.class, new DocumentDeserializer())
 			.registerTypeAdapter(DocumentCollection.class, new DocumentCollectionDeserializer())
@@ -234,8 +233,13 @@ public class ClicksignResource {
 				List<?> nestedList = (List<?>) value;
 				for (int i = 0; i < nestedList.size(); i++) {
 					String nKey = String.format("%s[]", key);
-					StringBody nValue = new StringBody(gson.toJson(nestedList.get(i), Map.class).toString(),
-							TEXT_PLAIN);
+
+					StringBody nValue;
+					try {
+						nValue = new StringBody(gson.toJson(nestedList.get(i), Map.class).toString(), TEXT_PLAIN);
+					} catch (ClassCastException e) {
+						nValue = new StringBody(nestedList.get(i).toString(), TEXT_PLAIN);
+					}
 					builder.addPart(nKey, nValue);
 				}
 			} else if (value instanceof String) {
