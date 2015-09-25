@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -108,55 +107,60 @@ public class Document extends ClicksignResource {
 	}
 
 	public static Document create(File file) throws ClicksignException {
-		return create( file, null);
+		return create(file, null, null);
 	}
 
 	public static Document create(File file, String accessToken) throws ClicksignException {
+		return create(file, null, accessToken);
+	}
+
+	public static Document create(File file, List<Signature> signers) throws ClicksignException {
+		return create(file, signers, null);
+	}
+
+	public static Document create(File file, List<Signature> signers, String accessToken) throws ClicksignException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("document[archive][original]", file);
+		if (signers != null) {
+			params.put("signers", new SignatureList(signers));
+		}
 
-		return request(RequestMethod.POST, UrlBuilder.classURL(Document.class), params, Document.class,
-				accessToken);
+		return request(RequestMethod.POST, UrlBuilder.classURL(Document.class), params, Document.class, accessToken);
 	}
 
-	public static Document createList(String key, List<Signature> signers, Boolean skipEmail) throws ClicksignException {
+	public static Document createList(String key, List<Signature> signers, Boolean skipEmail)
+			throws ClicksignException {
 		return createList(key, signers, skipEmail, null);
 	}
-	
+
 	public static Document createList(String key, List<Signature> signers) throws ClicksignException {
 		return createList(key, signers, Boolean.TRUE, null);
 	}
 
+	public static Document createList(String key, List<Signature> signers, String accessToken)
+			throws ClicksignException {
+		return createList(key, signers, Boolean.TRUE, accessToken);
+	}
+
 	public static Document createList(String key, List<Signature> signers, Boolean skipEmail, String accessToken)
 			throws ClicksignException {
-		Map<String, Object> params = new HashMap<String, Object>();;
+		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("skip_email", skipEmail);
 		params.put("signers", new SignatureList(signers));
-//		params.put("signers", buildSignersArray(signers));
 
 		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, "list"), params, Document.class,
 				accessToken);
 	}
 
-	private static List<Map<String,String>> buildSignersArray(List<Signature>signers) {
-		List<Map<String,String>> mapList = new ArrayList<Map<String,String>>();
-		for (Signature signature: signers) {
-			Map<String,String> signerMap = new HashMap<String,String>();
-			signerMap.put("email", signature.getEmail());
-			signerMap.put("act", signature.getAct());
-			mapList.add(signerMap);
-		}
-		return mapList;
-	}
-	
 	public static Document resend(String key, String email, String message) throws ClicksignException {
 		return resend(key, email, message, null);
 	}
 
 	public static Document resend(String key, String email, String message, String accessToken)
 			throws ClicksignException {
-		// TODO use email and message in the params
-		Map<String, Object> params = null;
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("email", email);
+		params.put("message", message);
 
 		return request(RequestMethod.POST, UrlBuilder.instanceURL(Document.class, key, "resend"), params,
 				Document.class, accessToken);
@@ -176,8 +180,11 @@ public class Document extends ClicksignResource {
 	}
 
 	public static Document download(String key, String accessToken) throws ClicksignException {
-		// TODO get a FileStream, etc
-		return request(RequestMethod.GET, UrlBuilder.instanceURL(Document.class, key, "download"), null, Document.class,
-				accessToken);
+		// TODO get the zipfile
+		throw new ClicksignException("Not implemented");
+		// //return request(RequestMethod.GET,
+		// UrlBuilder.instanceURL(Document.class, key, "download"), null,
+		// Document.class,
+		// accessToken);
 	}
 }
