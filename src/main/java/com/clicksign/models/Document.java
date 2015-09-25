@@ -1,6 +1,7 @@
 package com.clicksign.models;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -174,16 +175,11 @@ public class Document extends ClicksignResource {
 				accessToken);
 	}
 
-	public static Document download(String key) throws ClicksignException {
+	public static InputStream download(String key) throws ClicksignException {
 		return download(key, null);
 	}
 
-	public static Document download(String key, String accessToken) throws ClicksignException {
-		// TODO get the zipfile
-		throw new ClicksignException("Not implemented");
-		// //return request(RequestMethod.GET,
-		// UrlBuilder.instanceURL(Document.class, key, "download"), null,
-		// Document.class,
-		// accessToken);
+	public static InputStream download(String key, String accessToken) throws ClicksignException {
+		return getDownloadInputStream(UrlBuilder.instanceURL(Document.class, key, "download"), accessToken);
 	}
 }

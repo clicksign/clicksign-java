@@ -2,12 +2,12 @@ package com.clicksign.net;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -21,7 +21,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import com.clicksign.Clicksign;
 import com.clicksign.exception.ClicksignException;
@@ -60,9 +59,40 @@ public class ClicksignResource {
 		GET, POST, DELETE, PUT
 	}
 
+	protected static InputStream getDownloadInputStream(String url, String accessToken) throws ClicksignException {
+		accessToken = getAccessToken(accessToken);
+		String finalUrl = formatFinalUrl(url, accessToken);
+		HttpEntity emptyParams = buildRequestEntity(null);
+
+		ClicksignResponse response = executeRequest(RequestMethod.GET, finalUrl, emptyParams);
+		InputStream inputStream = null;
+		if (response.getCode() == 200) {
+			try {
+				inputStream = response.getHttpResponse().getEntity().getContent();
+			} catch (UnsupportedOperationException e) {
+				throw new ClicksignException(
+						String.format("Erro ao receber o arquivo da Clicksign (%s) - operação não suportada.",
+								Clicksign.API_BASE),
+						e);
+			} catch (IOException e) {
+				throw new ClicksignException(
+						String.format("Erro ao receber o arquivo da Clicksign (%s).", Clicksign.API_BASE), e);
+			}
+		} else if (response.getCode() == 202) {
+			inputStream = null;
+		}
+		return inputStream;
+	}
+
 	protected static <T> T request(ClicksignResource.RequestMethod method, String url, Map<String, Object> params,
 			Class<T> clazz, String accessToken) throws ClicksignException {
 
+		accessToken = getAccessToken(accessToken);
+
+		return _request(method, url, params, clazz, accessToken);
+	}
+
+	private static String getAccessToken(String accessToken) throws ClicksignException {
 		if ((Clicksign.accessToken == null || Clicksign.accessToken.length() == 0)
 				&& (accessToken == null || accessToken.length() == 0)) {
 			throw new ClicksignException(
@@ -74,7 +104,7 @@ public class ClicksignResource {
 			accessToken = Clicksign.accessToken;
 		}
 
-		return _request(method, url, params, clazz, accessToken);
+		return accessToken;
 	}
 
 	protected static <T> T _request(ClicksignResource.RequestMethod method, String url, Map<String, Object> params,
@@ -84,22 +114,7 @@ public class ClicksignResource {
 
 		ClicksignResponse response = executeRequest(method, finalUrl, reqEntity);
 
-		int rCode = response.responseCode;
-		String rBody = response.responseBody;
-
-		// TODO : response aqui
-		// System.out.println("_request");
-		// System.out.println("code = "+ rCode);
-		// System.out.println("body = "+ rBody);
-		// System.exit(2);
-
-		if (rCode < 200 || rCode >= 300) {
-			handleAPIError(rBody, rCode);
-		}
-
-		// System.out.println(gson.fromJson(rBody, clazz));
-
-		return gson.fromJson(rBody, clazz);
+		return gson.fromJson(response.getBody(), clazz);
 	}
 
 	private static ClicksignResponse executeRequest(RequestMethod method, String url, HttpEntity reqEntity)
@@ -131,19 +146,19 @@ public class ClicksignResource {
 					+ "por favor nos contate via suporte@clicksign.com.", Clicksign.API_BASE), e);
 		}
 
-		int rCode = response.getStatusLine().getStatusCode();
-		HttpEntity entity = response.getEntity();
-		String rBody = null;
-		try {
-			rBody = entity != null ? EntityUtils.toString(entity) : null;
-		} catch (ParseException e) {
-			throw new ClicksignException(String.format("Erro ao ler a resposta da Clicksign (%s)", Clicksign.API_BASE),
-					e);
-		} catch (IOException e) {
-			throw new ClicksignException(
-					String.format("Não foi possível obter a resposta da Clicksign (%s)", Clicksign.API_BASE), e);
+		ClicksignResponse clicksignResponse = new ClicksignResponse(response);
+		checkErrors(clicksignResponse);
+
+		return clicksignResponse;
+	}
+
+	private static void checkErrors(ClicksignResponse response) throws ClicksignException {
+		int code = response.code;
+		String body = response.body;
+
+		if (code < 200 || code >= 300) {
+			handleAPIError(body, code);
 		}
-		return new ClicksignResponse(rCode, rBody);
 	}
 
 	private static void addHeaders(HttpEntityEnclosingRequestBase request) {
@@ -251,15 +266,6 @@ public class ClicksignResource {
 						String.format("Erro ao codificar parametros HTTP: %s", value.getClass().getName()));
 			}
 		}
-		//
-		// //TODO morreu aqui
-		// try {
-		// builder.build().writeTo(System.out);
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// System.exit(0);
 
 		return builder.build();
 	}
@@ -281,9 +287,9 @@ public class ClicksignResource {
 		String error;
 	}
 
-	private static void handleAPIError(String rBody, int rCode) throws ClicksignException {
+	private static void handleAPIError(String body, int code) throws ClicksignException {
 		try {
-			ClicksignResource.Error error = gson.fromJson(rBody, ClicksignResource.Error.class);
+			ClicksignResource.Error error = gson.fromJson(body, ClicksignResource.Error.class);
 
 			if (error.error.length() > 0) {
 				throw new ClicksignException(error.error);
@@ -292,7 +298,7 @@ public class ClicksignResource {
 			throw new ClicksignException(error.message, error.param, null);
 		} catch (Exception e) {
 			throw new ClicksignException(
-					String.format("An error occured. Response code: %s Response body: %s", rCode, rBody));
+					String.format("An error occured. Response code: %s Response body: %s", code, body));
 		}
 	}
 }
