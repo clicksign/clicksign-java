@@ -27,11 +27,11 @@ public class ClicksignResponse {
 		try {
 			rBody = entity != null ? EntityUtils.toString(entity) : null;
 		} catch (ParseException e) {
-			throw new ClicksignException(String.format("Erro ao ler a resposta da Clicksign (%s)", Clicksign.API_BASE),
+			throw new ClicksignException(String.format("Erro ao ler a resposta da Clicksign (%s)", Clicksign.endPoint),
 					e);
 		} catch (IOException e) {
 			throw new ClicksignException(
-					String.format("Não foi possível obter a resposta da Clicksign (%s)", Clicksign.API_BASE), e);
+					String.format("Não foi possível obter a resposta da Clicksign (%s)", Clicksign.endPoint), e);
 		}
 		this.setHttpResponse(httpResponse);
 		this.setCode(rCode);

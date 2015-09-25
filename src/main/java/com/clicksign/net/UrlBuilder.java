@@ -21,7 +21,7 @@ public class UrlBuilder {
 	}
 
 	public static String singleClassURL(Class<?> clazz) {
-		return String.format("%s/%s/%s", Clicksign.API_BASE, Clicksign.apiVersion, className(clazz));
+		return String.format("%s/%s/%s", Clicksign.endPoint, Clicksign.apiVersion, className(clazz));
 	}
 
 	public static String classURL(Class<?> clazz) {

@@ -72,11 +72,11 @@ public class ClicksignResource {
 			} catch (UnsupportedOperationException e) {
 				throw new ClicksignException(
 						String.format("Erro ao receber o arquivo da Clicksign (%s) - operação não suportada.",
-								Clicksign.API_BASE),
+								Clicksign.endPoint),
 						e);
 			} catch (IOException e) {
 				throw new ClicksignException(
-						String.format("Erro ao receber o arquivo da Clicksign (%s).", Clicksign.API_BASE), e);
+						String.format("Erro ao receber o arquivo da Clicksign (%s).", Clicksign.endPoint), e);
 			}
 		} else if (response.getCode() == 202) {
 			inputStream = null;
@@ -143,7 +143,7 @@ public class ClicksignResource {
 		} catch (IOException e) {
 			throw new ClicksignException(String.format("Não foi possível conectar-se à Clicksign (%s). "
 					+ "Por favor verifique sua conexão de internet e tente novamente. Se este problema persistir,"
-					+ "por favor nos contate via suporte@clicksign.com.", Clicksign.API_BASE), e);
+					+ "por favor nos contate via suporte@clicksign.com.", Clicksign.endPoint), e);
 		}
 
 		ClicksignResponse clicksignResponse = new ClicksignResponse(response);
