@@ -4,7 +4,7 @@
 	<groupId>com.clicksign</groupId>
 	<artifactId>clicksign-java</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>0.9.0</version>
 	<name>clicksign-java</name>
 	<url>https://github.com/clicksign/clicksign-java</url>
 	<dependencies>
