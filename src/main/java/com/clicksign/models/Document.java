@@ -118,7 +118,8 @@ public class Document extends ClicksignResource {
 		return create(file, signers, null, null, null);
 	}
 
-	public static Document create(File file, List<Signature> signers, String message, Boolean skipEmail, String accessToken) throws ClicksignException {
+	public static Document create(File file, List<Signature> signers, String message, Boolean skipEmail,
+			String accessToken) throws ClicksignException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("document[archive][original]", file);
 		if (signers != null) {
