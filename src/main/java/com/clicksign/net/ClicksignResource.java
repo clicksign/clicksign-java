@@ -67,17 +67,7 @@ public class ClicksignResource {
 		ClicksignResponse response = executeRequest(RequestMethod.GET, finalUrl, emptyParams);
 		InputStream inputStream = null;
 		if (response.getCode() == 200) {
-			try {
-				inputStream = response.getHttpResponse().getEntity().getContent();
-			} catch (UnsupportedOperationException e) {
-				throw new ClicksignException(
-						String.format("Erro ao receber o arquivo da Clicksign (%s) - operação não suportada.",
-								Clicksign.endPoint),
-						e);
-			} catch (IOException e) {
-				throw new ClicksignException(
-						String.format("Erro ao receber o arquivo da Clicksign (%s).", Clicksign.endPoint), e);
-			}
+			inputStream = response.getContent();
 		} else if (response.getCode() == 202) {
 			inputStream = null;
 		}

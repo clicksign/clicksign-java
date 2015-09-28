@@ -1,6 +1,7 @@
 package com.clicksign.net;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,7 +14,7 @@ import com.clicksign.exception.ClicksignException;
 public class ClicksignResponse {
 	int code;
 	String body;
-	HttpResponse httpResponse;
+	InputStream content;
 
 	public ClicksignResponse(int responseCode, String responseBody) {
 		this.code = responseCode;
@@ -21,11 +22,26 @@ public class ClicksignResponse {
 	}
 
 	public ClicksignResponse(HttpResponse httpResponse) throws ClicksignException {
-		int rCode = httpResponse.getStatusLine().getStatusCode();
+		int code = httpResponse.getStatusLine().getStatusCode();
+		setCode(code);
+
 		HttpEntity entity = httpResponse.getEntity();
-		String rBody = null;
+		setBodyOrContent(entity);
+	}
+
+	private void setBodyOrContent(HttpEntity entity) throws ClicksignException {
+		String contentType = entity.getContentType().getValue();
+
 		try {
-			rBody = entity != null ? EntityUtils.toString(entity) : null;
+			if (contentType.startsWith("application/json")) {
+				this.setBody(getJsonBody(entity));
+			} else if (contentType.startsWith("application/zip")) {
+				this.setContent(entity.getContent());
+			} else {
+				throw new ClicksignException(String.format(
+						"Tipo de conteúdo não esperado %s. Entre em contato com a Clicksign via suporte@clicksign.com",
+						contentType));
+			}
 		} catch (ParseException e) {
 			throw new ClicksignException(String.format("Erro ao ler a resposta da Clicksign (%s)", Clicksign.endPoint),
 					e);
@@ -33,17 +49,19 @@ public class ClicksignResponse {
 			throw new ClicksignException(
 					String.format("Não foi possível obter a resposta da Clicksign (%s)", Clicksign.endPoint), e);
 		}
-		this.setHttpResponse(httpResponse);
-		this.setCode(rCode);
-		this.setBody(rBody);
+
 	}
 
-	public HttpResponse getHttpResponse() {
-		return httpResponse;
+	private String getJsonBody(HttpEntity entity) throws ParseException, IOException {
+		return entity != null ? EntityUtils.toString(entity) : null;
 	}
 
-	public void setHttpResponse(HttpResponse httpResponse) {
-		this.httpResponse = httpResponse;
+	public InputStream getContent() {
+		return content;
+	}
+
+	public void setContent(InputStream content) {
+		this.content = content;
 	}
 
 	public int getCode() {
@@ -61,5 +79,4 @@ public class ClicksignResponse {
 	public void setBody(String responseBody) {
 		this.body = responseBody;
 	}
-
 }
