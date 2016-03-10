@@ -233,6 +233,14 @@ public class ClicksignResource {
 					String actKey = String.format("%s[][act]", key);
 					StringBody act = new StringBody(signature.getAct(), TEXT_PLAIN);
 					builder.addPart(actKey, act);
+					
+					String allowMethodKey = String.format("%s[][allow_method]", key);
+					StringBody allow_method = new StringBody(signature.getAllowMethod(), TEXT_PLAIN);
+					builder.addPart(allowMethodKey, allow_method);
+
+					String phoneNumberKey = String.format("%s[][phone_number]", key);
+					StringBody phone_number = new StringBody(signature.getPhoneNumber(), TEXT_PLAIN);
+					builder.addPart(phoneNumberKey, phone_number);				
 				}
 			} else if (value instanceof List<?>) {
 				List<?> nestedList = (List<?>) value;
