@@ -9,6 +9,8 @@ public class Signature {
 	String documentation;
 	String key;
 	String act;
+	String allow_method;
+	String phone_number;
 	String decision;
 	String address;
 	String email;
@@ -16,10 +18,12 @@ public class Signature {
 	Date createdAt;
 	Date updatedAt;
 
-	public Signature(String email, String act) {
+	public Signature(String email, String act, String allow_method, String phone_number) {
 		super();
 		this.act = act;
 		this.email = email;
+		this.allow_method = allow_method;
+		this.phone_number = phone_number;
 	}
 
 	public String getDisplayName() {
@@ -69,7 +73,23 @@ public class Signature {
 	public void setAct(String act) {
 		this.act = act;
 	}
+	
+	public String getAllowMethod() {
+		return allow_method;
+	}
 
+	public void setAllowMethod(String allow_method) {
+		this.allow_method = allow_method;
+	}
+	
+	public String getPhoneNumber() {
+		return phone_number;
+	}
+
+	public void setPhoneNumber(String phone_number) {
+		this.phone_number = phone_number;
+	}
+	
 	public String getDecision() {
 		return decision;
 	}
