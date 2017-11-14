@@ -3,6 +3,7 @@ package com.clicksign.net;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ClicksignResource {
+public class ClicksignResource implements Serializable {
 	public static final String CHARSET = "UTF-8";
 
 	private static final String USER_AGENT = String.format("Clicksign/Java %s", Clicksign.VERSION);
@@ -57,6 +58,10 @@ public class ClicksignResource {
 
 	protected enum RequestMethod {
 		GET, POST, DELETE, PUT
+	}
+
+	public ClicksignResource(){
+		super();
 	}
 
 	protected static InputStream getDownloadInputStream(String url, String accessToken) throws ClicksignException {

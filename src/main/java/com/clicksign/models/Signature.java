@@ -1,8 +1,9 @@
 package com.clicksign.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Signature {
+public class Signature implements Serializable {
 	String displayName;
 	String title;
 	String companyName;
@@ -15,6 +16,10 @@ public class Signature {
 	Date signedAt;
 	Date createdAt;
 	Date updatedAt;
+
+	public Signature() {
+		super();
+	}
 
 	public Signature(String email, String act) {
 		super();
