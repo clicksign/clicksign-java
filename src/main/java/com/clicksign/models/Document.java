@@ -20,6 +20,10 @@ public class Document extends ClicksignResource {
 	String userKey;
 	SignatureList list;
 
+	public Document() {
+		super();
+	}
+
 	public Document(String key, String originalName, String status, Date createdAt, Date updatedAt, String userKey,
 			SignatureList list) {
 		super();

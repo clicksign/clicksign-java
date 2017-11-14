@@ -1,14 +1,19 @@
 package com.clicksign.models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class SignatureList {
+public class SignatureList implements Serializable{
 	Date createdAt;
 	Date startedAt;
 	Date updatedAt;
 	String userKey;
 	List<Signature> signatures;
+
+	public SignatureList() {
+		super();
+	}
 
 	public SignatureList(Date createdAt, Date startedAt, Date updatedAt, String userKey, List<Signature> signatures) {
 		super();
